@@ -165,11 +165,24 @@ void AttachFunctions()
 	
 	DetourAttach(&(PVOID&)OriginalSetWindowTextA, HookSetWindowTextA);
 	DetourAttach(&(PVOID&)OriginalGetWindowTextA, HookGetWindowTextA);
+	
+	DetourAttach(&(PVOID&)OriginalIsWindowUnicode, HookIsWindowUnicode);
+	DetourAttach(&(PVOID&)OriginalSetWindowLongA, HookSetWindowLongA);
+	DetourAttach(&(PVOID&)OriginalSetWindowLongW, HookSetWindowLongW);
+	DetourAttach(&(PVOID&)OriginalGetWindowLongA, HookGetWindowLongA);
+	DetourAttach(&(PVOID&)OriginalGetWindowLongW, HookGetWindowLongW);
+#ifdef _WIN64
+	DetourAttach(&(PVOID&)OriginalSetWindowLongPtrA, HookSetWindowLongPtrA);
+	DetourAttach(&(PVOID&)OriginalSetWindowLongPtrW, HookSetWindowLongPtrW);
+	DetourAttach(&(PVOID&)OriginalGetWindowLongPtrA, HookGetWindowLongPtrA);
+	DetourAttach(&(PVOID&)OriginalGetWindowLongPtrW, HookGetWindowLongPtrW);
+#endif
 	DetourAttach(&(PVOID&)OriginalDirectSoundEnumerateA, HookDirectSoundEnumerateA);
 	DetourAttach(&(PVOID&)OriginalCreateFontA, HookCreateFontA);
 	DetourAttach(&(PVOID&)OriginalCreateFontW, HookCreateFontW);
 	DetourAttach(&(PVOID&)OriginalCreateFontIndirectA, HookCreateFontIndirectA);
 	DetourAttach(&(PVOID&)OriginalCreateFontIndirectW, HookCreateFontIndirectW);
+	DetourAttach(&(PVOID&)OriginalGetStockObject, HookGetStockObject);
 	DetourAttach(&(PVOID&)OriginalCreateFontIndirectExA, HookCreateFontIndirectExA);
 	DetourAttach(&(PVOID&)OriginalCreateFontIndirectExW, HookCreateFontIndirectExW);
 	//DetourAttach(&(PVOID&)OriginalTextOutA, HookTextOutA);
@@ -241,12 +254,25 @@ void DetachFunctions()
 	//DetourDetach(&(PVOID&)OriginalShellExecuteExW, HookShellExecuteExW);
 
 	DetourDetach(&(PVOID&)OriginalSetWindowTextA, HookSetWindowTextA);
-	//DetourDetach(&(PVOID&)OriginalGetWindowTextA, HookGetWindowTextA);
+	DetourDetach(&(PVOID&)OriginalGetWindowTextA, HookGetWindowTextA);
+	
+	DetourDetach(&(PVOID&)OriginalIsWindowUnicode, HookIsWindowUnicode);
+	DetourDetach(&(PVOID&)OriginalSetWindowLongA, HookSetWindowLongA);
+	DetourDetach(&(PVOID&)OriginalSetWindowLongW, HookSetWindowLongW);
+	DetourDetach(&(PVOID&)OriginalGetWindowLongA, HookGetWindowLongA);
+	DetourDetach(&(PVOID&)OriginalGetWindowLongW, HookGetWindowLongW);
+#ifdef _WIN64
+	DetourDetach(&(PVOID&)OriginalSetWindowLongPtrA, HookSetWindowLongPtrA);
+	DetourDetach(&(PVOID&)OriginalSetWindowLongPtrW, HookSetWindowLongPtrW);
+	DetourDetach(&(PVOID&)OriginalGetWindowLongPtrA, HookGetWindowLongPtrA);
+	DetourDetach(&(PVOID&)OriginalGetWindowLongPtrW, HookGetWindowLongPtrW);
+#endif
 	DetourDetach(&(PVOID&)OriginalDirectSoundEnumerateA, HookDirectSoundEnumerateA);
 	DetourDetach(&(PVOID&)OriginalCreateFontA, HookCreateFontA);
 	DetourDetach(&(PVOID&)OriginalCreateFontW, HookCreateFontW);
 	DetourDetach(&(PVOID&)OriginalCreateFontIndirectA, HookCreateFontIndirectA);
 	DetourDetach(&(PVOID&)OriginalCreateFontIndirectW, HookCreateFontIndirectW);
+	DetourDetach(&(PVOID&)OriginalGetStockObject, HookGetStockObject);
 	DetourDetach(&(PVOID&)OriginalCreateFontIndirectExA, HookCreateFontIndirectExA);
 	DetourDetach(&(PVOID&)OriginalCreateFontIndirectExW, HookCreateFontIndirectExW);
 	DetourDetach(&(PVOID&)OriginalTextOutA, HookTextOutA);

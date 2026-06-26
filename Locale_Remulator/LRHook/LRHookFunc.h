@@ -58,6 +58,28 @@ int WINAPI HookMultiByteToWideChar(UINT CodePage, DWORD dwFlags,
 	LPCSTR lpMultiByteStr, int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 int WINAPI HookWideCharToMultiByte(UINT CodePage, DWORD dwFlags,
 	LPCWSTR lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, LPBOOL lpUsedDefaultChar);
+
+LONG WINAPI HookSetWindowLongA(HWND hWnd, int nIndex, LONG dwNewLong);
+LONG WINAPI HookSetWindowLongW(HWND hWnd, int nIndex, LONG dwNewLong);
+#ifdef _WIN64
+LONG_PTR WINAPI HookSetWindowLongPtrA(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
+LONG_PTR WINAPI HookSetWindowLongPtrW(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
+#endif
+
+LONG WINAPI HookGetWindowLongA(HWND hWnd, int nIndex);
+LONG WINAPI HookGetWindowLongW(HWND hWnd, int nIndex);
+#ifdef _WIN64
+LONG_PTR WINAPI HookGetWindowLongPtrA(HWND hWnd, int nIndex);
+LONG_PTR WINAPI HookGetWindowLongPtrW(HWND hWnd, int nIndex);
+#endif
+
+BOOL WINAPI HookIsWindowUnicode(HWND hWnd);
+
+HGDIOBJ WINAPI HookGetStockObject(int i);
+int WINAPI HookEnumFontsA(HDC hdc, LPCSTR lpLogfont, FONTENUMPROCA lpProc, LPARAM lParam);
+int WINAPI HookEnumFontsW(HDC hdc, LPCWSTR lpLogfont, FONTENUMPROCW lpProc, LPARAM lParam);
+int WINAPI HookEnumFontFamiliesExA(HDC hdc, LPLOGFONTA lpLogfont, FONTENUMPROCA lpProc, LPARAM lParam, DWORD dwFlags);
+int WINAPI HookEnumFontFamiliesExW(HDC hdc, LPLOGFONTW lpLogfont, FONTENUMPROCW lpProc, LPARAM lParam, DWORD dwFlags);
 UINT WINAPI HookWinExec(
 	_In_ LPSTR lpCmdLine,
 	_In_ UINT uCmdShow);

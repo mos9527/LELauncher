@@ -262,12 +262,98 @@ static ATOM(WINAPI* OriginalRegisterClassExA)(
 	_In_ CONST WNDCLASSEXA* lpWndClass
 	) = RegisterClassExA;
 
+static HGDIOBJ(WINAPI* OriginalGetStockObject)(
+	_In_ int i
+	) = GetStockObject;
+
+static int(WINAPI* OriginalEnumFontsA)(
+	_In_ HDC hdc,
+	_In_opt_ LPCSTR lpLogfont,
+	_In_ FONTENUMPROCA lpProc,
+	_In_ LPARAM lParam
+	) = EnumFontsA;
+
+static int(WINAPI* OriginalEnumFontsW)(
+	_In_ HDC hdc,
+	_In_opt_ LPCWSTR lpLogfont,
+	_In_ FONTENUMPROCW lpProc,
+	_In_ LPARAM lParam
+	) = EnumFontsW;
+
+static int(WINAPI* OriginalEnumFontFamiliesExA)(
+	_In_ HDC hdc,
+	_In_ LPLOGFONTA lpLogfont,
+	_In_ FONTENUMPROCA lpProc,
+	_In_ LPARAM lParam,
+	_In_ DWORD dwFlags
+	) = EnumFontFamiliesExA;
+
+static int(WINAPI* OriginalEnumFontFamiliesExW)(
+	_In_ HDC hdc,
+	_In_ LPLOGFONTW lpLogfont,
+	_In_ FONTENUMPROCW lpProc,
+	_In_ LPARAM lParam,
+	_In_ DWORD dwFlags
+	) = EnumFontFamiliesExW;
+
 static LRESULT(WINAPI* OriginalDefWindowProcA)(
 	_In_ HWND hWnd,
 	_In_ UINT Msg,
 	_In_ WPARAM wParam,
 	_In_ LPARAM lParam
 	) = DefWindowProcA;
+
+static LONG(WINAPI* OriginalSetWindowLongA)(
+	_In_ HWND hWnd,
+	_In_ int nIndex,
+	_In_ LONG dwNewLong
+	) = SetWindowLongA;
+
+static LONG(WINAPI* OriginalSetWindowLongW)(
+	_In_ HWND hWnd,
+	_In_ int nIndex,
+	_In_ LONG dwNewLong
+	) = SetWindowLongW;
+
+#ifdef _WIN64
+static LONG_PTR(WINAPI* OriginalSetWindowLongPtrA)(
+	_In_ HWND hWnd,
+	_In_ int nIndex,
+	_In_ LONG_PTR dwNewLong
+	) = SetWindowLongPtrA;
+
+static LONG_PTR(WINAPI* OriginalSetWindowLongPtrW)(
+	_In_ HWND hWnd,
+	_In_ int nIndex,
+	_In_ LONG_PTR dwNewLong
+	) = SetWindowLongPtrW;
+#endif
+
+static LONG(WINAPI* OriginalGetWindowLongA)(
+	_In_ HWND hWnd,
+	_In_ int nIndex
+	) = GetWindowLongA;
+
+static LONG(WINAPI* OriginalGetWindowLongW)(
+	_In_ HWND hWnd,
+	_In_ int nIndex
+	) = GetWindowLongW;
+
+#ifdef _WIN64
+static LONG_PTR(WINAPI* OriginalGetWindowLongPtrA)(
+	_In_ HWND hWnd,
+	_In_ int nIndex
+	) = GetWindowLongPtrA;
+
+static LONG_PTR(WINAPI* OriginalGetWindowLongPtrW)(
+	_In_ HWND hWnd,
+	_In_ int nIndex
+	) = GetWindowLongPtrW;
+#endif
+
+static BOOL(WINAPI* OriginalIsWindowUnicode)(
+	_In_ HWND hWnd
+	) = IsWindowUnicode;
 
 static LCID(WINAPI* OriginalGetThreadLocale)() = GetThreadLocale;
 static LANGID(WINAPI* OriginalGetSystemDefaultUILanguage)() = GetSystemDefaultUILanguage;

@@ -421,3 +421,80 @@ LRESULT NTAPI ANSI_GETLINE(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 	return Length;
 }
 
+HGDIOBJ WINAPI HookGetStockObject(int i)
+{
+	static HGDIOBJ CachedStockObjects[20] = { 0 };
+	if (i >= 0 && i < 20)
+	{
+		if (i == ANSI_FIXED_FONT || i == ANSI_VAR_FONT || i == DEVICE_DEFAULT_FONT ||
+			i == DEFAULT_GUI_FONT || i == OEM_FIXED_FONT || i == SYSTEM_FONT || i == SYSTEM_FIXED_FONT)
+		{
+			if (CachedStockObjects[i] != NULL)
+				return CachedStockObjects[i];
+
+			HGDIOBJ obj = OriginalGetStockObject(i);
+			LOGFONTW lf;
+			if (GetObjectW(obj, sizeof(lf), &lf))
+			{
+				CHARSETINFO cs;
+				if (TranslateCharsetInfo((DWORD*)(UINT_PTR)settings.CodePage, &cs, TCI_SRCCODEPAGE))
+					lf.lfCharSet = cs.ciCharset;
+				CachedStockObjects[i] = CreateFontIndirectW(&lf);
+				return CachedStockObjects[i] ? CachedStockObjects[i] : obj;
+			}
+		}
+	}
+	return OriginalGetStockObject(i);
+}
+
+BOOL WINAPI HookIsWindowUnicode(HWND hWnd)
+{
+	// We return TRUE to force WinForms to use Unicode subclassing.
+	// This bypasses the need for ANSI message translation since WinForms handles Unicode natively!
+	return TRUE;
+}
+
+LONG WINAPI HookSetWindowLongA(HWND hWnd, int nIndex, LONG dwNewLong)
+{
+	return OriginalSetWindowLongA(hWnd, nIndex, dwNewLong);
+}
+
+LONG WINAPI HookSetWindowLongW(HWND hWnd, int nIndex, LONG dwNewLong)
+{
+	return OriginalSetWindowLongW(hWnd, nIndex, dwNewLong);
+}
+
+#ifdef _WIN64
+LONG_PTR WINAPI HookSetWindowLongPtrA(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
+{
+	return OriginalSetWindowLongPtrA(hWnd, nIndex, dwNewLong);
+}
+
+LONG_PTR WINAPI HookSetWindowLongPtrW(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
+{
+	return OriginalSetWindowLongPtrW(hWnd, nIndex, dwNewLong);
+}
+#endif
+
+LONG WINAPI HookGetWindowLongA(HWND hWnd, int nIndex)
+{
+	return OriginalGetWindowLongA(hWnd, nIndex);
+}
+
+LONG WINAPI HookGetWindowLongW(HWND hWnd, int nIndex)
+{
+	return OriginalGetWindowLongW(hWnd, nIndex);
+}
+
+#ifdef _WIN64
+LONG_PTR WINAPI HookGetWindowLongPtrA(HWND hWnd, int nIndex)
+{
+	return OriginalGetWindowLongPtrA(hWnd, nIndex);
+}
+
+LONG_PTR WINAPI HookGetWindowLongPtrW(HWND hWnd, int nIndex)
+{
+	return OriginalGetWindowLongPtrW(hWnd, nIndex);
+}
+#endif
+
