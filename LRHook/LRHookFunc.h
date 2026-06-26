@@ -108,6 +108,45 @@ BOOL WINAPI HookCreateProcessW(
 	_Out_ LPPROCESS_INFORMATION lpProcessInformation
 );
 
+HWND WINAPI HookCreateDialogIndirectParamA(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCDLGTEMPLATEA lpTemplate,
+	_In_opt_ HWND hWndParent,
+	_In_opt_ DLGPROC lpDialogFunc,
+	_In_ LPARAM dwInitParam
+);
+
+HWND WINAPI HookCreateDialogParamA(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCSTR lpTemplateName,
+	_In_opt_ HWND hWndParent,
+	_In_opt_ DLGPROC lpDialogFunc,
+	_In_ LPARAM dwInitParam
+);
+
+INT_PTR WINAPI HookDialogBoxIndirectParamA(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCDLGTEMPLATEA hDialogTemplate,
+	_In_opt_ HWND hWndParent,
+	_In_opt_ DLGPROC lpDialogFunc,
+	_In_ LPARAM dwInitParam
+);
+
+int WINAPI HookLoadStringA(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ UINT uID,
+	_Out_writes_to_(cchBufferMax, return + 1) LPSTR lpBuffer,
+	_In_ int cchBufferMax
+);
+
+int WINAPI HookLoadStringW(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ UINT uID,
+	_Out_writes_to_(cchBufferMax, return + 1) LPWSTR lpBuffer,
+	_In_ int cchBufferMax
+);
+
+
 BOOL WINAPI LRCreateProcessInternalW(
 	_In_opt_ LPCWSTR lpApplicationName,
 	_Inout_opt_ LPWSTR lpCommandLine,
@@ -273,6 +312,25 @@ int WINAPI HookDrawTextExA(
 	_In_opt_ LPDRAWTEXTPARAMS lpdtp
 );
 
+BOOL WINAPI HookExtTextOutA(
+	_In_ HDC hdc,
+	_In_ int x,
+	_In_ int y,
+	_In_ UINT options,
+	_In_opt_ CONST RECT* lprect,
+	_In_reads_opt_(c) LPCSTR lpString,
+	_In_ UINT c,
+	_In_reads_opt_(c) CONST INT* lpDx
+);
+
+int WINAPI HookDrawTextA(
+	_In_ HDC hdc,
+	_Inout_updates_(cchText) LPCSTR lpchText,
+	_In_ int cchText,
+	_Inout_ LPRECT lprc,
+	_In_ UINT format
+);
+
 HANDLE WINAPI HookGetClipboardData(
 	UINT uFormat
 );
@@ -370,6 +428,74 @@ LRESULT CALLBACK HookDefWindowProcA(
 	_In_ UINT Msg,
 	_In_ WPARAM wParam,
 	_In_ LPARAM lParam
+);
+
+LRESULT WINAPI HookSendDlgItemMessageA(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_In_ UINT Msg,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+);
+
+BOOL WINAPI HookSetDlgItemTextA(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_In_ LPCSTR lpString
+);
+
+UINT WINAPI HookGetDlgItemTextA(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_Out_writes_(cchMax) LPSTR lpString,
+	_In_ int cchMax
+);
+
+HMENU WINAPI HookLoadMenuA(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCSTR lpMenuName
+);
+
+HMENU WINAPI HookLoadMenuW(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCWSTR lpMenuName
+);
+
+BOOL WINAPI HookInsertMenuA(
+	_In_ HMENU hMenu,
+	_In_ UINT uPosition,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+);
+
+BOOL WINAPI HookAppendMenuA(
+	_In_ HMENU hMenu,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+);
+
+BOOL WINAPI HookModifyMenuA(
+	_In_ HMENU hMnu,
+	_In_ UINT uPosition,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+);
+
+BOOL WINAPI HookInsertMenuItemA(
+	_In_ HMENU hmenu,
+	_In_ UINT item,
+	_In_ BOOL fByPosition,
+	_In_ LPCMENUITEMINFOA lpmi
+);
+
+BOOL WINAPI HookSetMenuItemInfoA(
+	_In_ HMENU hmenu,
+	_In_ UINT item,
+	_In_ BOOL fByPosition,
+	_In_ LPCMENUITEMINFOA lpmi
 );
 
 DWORD WINAPI HookGetTimeZoneInformation(

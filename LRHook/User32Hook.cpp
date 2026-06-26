@@ -237,6 +237,11 @@ LRESULT NTAPI ANSI_INLPCREATESTRUCT(HWND Window, UINT Message, WPARAM wParam, LP
 	LPCREATESTRUCTA CreateStructA;
 	CREATESTRUCTW   CreateStructW;
 
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
+
 	CreateStructA = (LPCREATESTRUCTA)lParam;
 	CreateStructW.lpszClass = nullptr;
 	CreateStructW.lpszName = nullptr;
@@ -260,6 +265,11 @@ LRESULT NTAPI ANSI_INLPMDICREATESTRUCT(HWND Window, UINT Message, WPARAM wParam,
 	LRESULT				Result;
 	LPMDICREATESTRUCTA  MdiCreateStructA;
 	MDICREATESTRUCTW    MdiCreateStructW;
+
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
 	MdiCreateStructA = (LPMDICREATESTRUCTA)lParam;
 	MdiCreateStructW.szClass = nullptr;
@@ -288,6 +298,11 @@ LRESULT NTAPI ANSI_INSTRING(HWND Window, UINT Message, WPARAM wParam, LPARAM lPa
 	LPSTR	Ansi;
 	LPWSTR	Unicode;
 
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
+
 	Ansi = (LPSTR)lParam;
 	Unicode = nullptr;
 
@@ -308,6 +323,11 @@ LRESULT NTAPI ANSI_GETTEXT(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 	LPWSTR UnicodeBuffer;
 	LPSTR AnsiBuffer;
 
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
+
 	AnsiBuffer = (LPSTR)lParam;
 
 	Length = SendMessageW(Window, Message + 1, wParam, lParam);
@@ -321,7 +341,7 @@ LRESULT NTAPI ANSI_GETTEXT(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 
 	Length = SendMessageW(Window, Message, wParam, (LPARAM)UnicodeBuffer);
 	if (Length > 0)
-		Length = WideCharToMultiByte(CP_ACP, 0, UnicodeBuffer, Length, AnsiBuffer, Length * sizeof(WCHAR), NULL, NULL);
+		Length = WideCharToMultiByte(settings.CodePage, 0, UnicodeBuffer, Length, AnsiBuffer, Length * sizeof(WCHAR), NULL, NULL);
 
 	FreeStringInternal(UnicodeBuffer);
 
@@ -332,6 +352,11 @@ LRESULT NTAPI ANSI_GETTEXTLENGTH(HWND Window, UINT Message, WPARAM wParam, LPARA
 {
 	LRESULT Length;
 	LPWSTR UnicodeBuffer;
+
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
 	Length = SendMessageW(Window, Message, wParam, lParam);
 	if (Length < 0) 
@@ -347,7 +372,7 @@ LRESULT NTAPI ANSI_GETTEXTLENGTH(HWND Window, UINT Message, WPARAM wParam, LPARA
 	Length = SendMessageW(Window, Message - 1, wParam, (LPARAM)UnicodeBuffer);
 	if (Length > 0)
 	{
-		Length = WideCharToMultiByte(CP_ACP, 0, UnicodeBuffer, Length * sizeof(WCHAR), NULL, 0, NULL, NULL);
+		Length = WideCharToMultiByte(settings.CodePage, 0, UnicodeBuffer, Length * sizeof(WCHAR), NULL, 0, NULL, NULL);
 	}
 
 	FreeStringInternal(UnicodeBuffer);
@@ -360,6 +385,11 @@ LRESULT NTAPI ANSI_OUTSTRING(HWND Window, UINT Message, WPARAM wParam, LPARAM lP
 	LRESULT	UnicodeSize, AnsiSize;
 	LPWSTR	UnicodeBuffer;
 	LPSTR	AnsiBuffer;
+
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
 	AnsiBuffer = (LPSTR)lParam;
 	AnsiSize = wParam;
@@ -374,7 +404,7 @@ LRESULT NTAPI ANSI_OUTSTRING(HWND Window, UINT Message, WPARAM wParam, LPARAM lP
 		return 0;
 
 	AnsiSize = SendMessageW(Window, Message, UnicodeSize, (LPARAM)UnicodeBuffer);
-	AnsiSize = WideCharToMultiByte(CP_ACP, 0, UnicodeBuffer, UnicodeSize, AnsiBuffer, AnsiSize, NULL, NULL);
+	AnsiSize = WideCharToMultiByte(settings.CodePage, 0, UnicodeBuffer, (int)UnicodeSize, AnsiBuffer, (int)AnsiSize, NULL, NULL);
 
 	FreeStringInternal(UnicodeBuffer);
 
@@ -386,6 +416,11 @@ LRESULT NTAPI ANSI_GETLINE(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 	LRESULT AnsiSize, Length;
 	LPSTR AnsiBuffer;
 	LPWSTR UnicodeBuffer;
+
+	if (!IsWindowUnicode(Window))
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
 	typedef union
 	{
@@ -413,7 +448,7 @@ LRESULT NTAPI ANSI_GETLINE(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 
 	if (Length != 0)
 	{
-		Length = WideCharToMultiByte(CP_ACP, 0, UnicodeBuffer, Length, AnsiBuffer, AnsiSize, NULL, NULL);
+		Length = WideCharToMultiByte(settings.CodePage, 0, UnicodeBuffer, Length, AnsiBuffer, AnsiSize, NULL, NULL);
 	}
 
 	FreeStringInternal(UnicodeBuffer);
@@ -421,80 +456,76 @@ LRESULT NTAPI ANSI_GETLINE(HWND Window, UINT Message, WPARAM wParam, LPARAM lPar
 	return Length;
 }
 
-HGDIOBJ WINAPI HookGetStockObject(int i)
+LRESULT NTAPI ANSI_SETTEXT(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	static HGDIOBJ CachedStockObjects[20] = { 0 };
-	if (i >= 0 && i < 20)
+	LPSTR Ansi = (LPSTR)lParam;
+	LPWSTR Unicode = nullptr;
+
+	if (Ansi)
 	{
-		if (i == ANSI_FIXED_FONT || i == ANSI_VAR_FONT || i == DEVICE_DEFAULT_FONT ||
-			i == DEFAULT_GUI_FONT || i == OEM_FIXED_FONT || i == SYSTEM_FONT || i == SYSTEM_FIXED_FONT)
-		{
-			if (CachedStockObjects[i] != NULL)
-				return CachedStockObjects[i];
-
-			HGDIOBJ obj = OriginalGetStockObject(i);
-			LOGFONTW lf;
-			if (GetObjectW(obj, sizeof(lf), &lf))
-			{
-				CHARSETINFO cs;
-				if (TranslateCharsetInfo((DWORD*)(UINT_PTR)settings.CodePage, &cs, TCI_SRCCODEPAGE))
-					lf.lfCharSet = cs.ciCharset;
-				CachedStockObjects[i] = CreateFontIndirectW(&lf);
-				return CachedStockObjects[i] ? CachedStockObjects[i] : obj;
-			}
-		}
+		Unicode = MultiByteToWideCharInternal(Ansi);
+		lParam = (LPARAM)Unicode;
 	}
-	return OriginalGetStockObject(i);
+
+	LRESULT Result = SendMessageW(Window, Message, wParam, lParam);
+	FreeStringInternal(Unicode);
+	return Result;
 }
 
-BOOL WINAPI HookIsWindowUnicode(HWND hWnd)
-{
-	// We return TRUE to force WinForms to use Unicode subclassing.
-	// This bypasses the need for ANSI message translation since WinForms handles Unicode natively!
-	return TRUE;
-}
+// Tab control message constants
+#ifndef TCM_FIRST
+#define TCM_FIRST               0x1300
+#endif
+#define TCM_INSERTITEMA         (TCM_FIRST + 7)
+#define TCM_SETITEMA            (TCM_FIRST + 6)
+#define TCM_INSERTITEMW         (TCM_FIRST + 62)
+#define TCM_SETITEMW            (TCM_FIRST + 61)
 
-LONG WINAPI HookSetWindowLongA(HWND hWnd, int nIndex, LONG dwNewLong)
-{
-	return OriginalSetWindowLongA(hWnd, nIndex, dwNewLong);
-}
-
-LONG WINAPI HookSetWindowLongW(HWND hWnd, int nIndex, LONG dwNewLong)
-{
-	return OriginalSetWindowLongW(hWnd, nIndex, dwNewLong);
-}
-
-#ifdef _WIN64
-LONG_PTR WINAPI HookSetWindowLongPtrA(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
-{
-	return OriginalSetWindowLongPtrA(hWnd, nIndex, dwNewLong);
-}
-
-LONG_PTR WINAPI HookSetWindowLongPtrW(HWND hWnd, int nIndex, LONG_PTR dwNewLong)
-{
-	return OriginalSetWindowLongPtrW(hWnd, nIndex, dwNewLong);
-}
+#ifndef TCIF_TEXT
+#define TCIF_TEXT               0x0001
 #endif
 
-LONG WINAPI HookGetWindowLongA(HWND hWnd, int nIndex)
-{
-	return OriginalGetWindowLongA(hWnd, nIndex);
-}
+typedef struct {
+	UINT mask;
+	DWORD dwState;
+	DWORD dwStateMask;
+	LPSTR pszText;
+	int cchTextMax;
+	int iImage;
+	LPARAM lParam;
+} TCITEMA_COMPAT;
 
-LONG WINAPI HookGetWindowLongW(HWND hWnd, int nIndex)
-{
-	return OriginalGetWindowLongW(hWnd, nIndex);
-}
+typedef struct {
+	UINT mask;
+	DWORD dwState;
+	DWORD dwStateMask;
+	LPWSTR pszText;
+	int cchTextMax;
+	int iImage;
+	LPARAM lParam;
+} TCITEMW_COMPAT;
 
-#ifdef _WIN64
-LONG_PTR WINAPI HookGetWindowLongPtrA(HWND hWnd, int nIndex)
+LRESULT NTAPI ANSI_TABCONTROL(HWND Window, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	return OriginalGetWindowLongPtrA(hWnd, nIndex);
-}
+	TCITEMA_COMPAT* pItemA = (TCITEMA_COMPAT*)lParam;
+	if (!pItemA || !(pItemA->mask & TCIF_TEXT) || !pItemA->pszText)
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
-LONG_PTR WINAPI HookGetWindowLongPtrW(HWND hWnd, int nIndex)
-{
-	return OriginalGetWindowLongPtrW(hWnd, nIndex);
-}
-#endif
+	LPWSTR wstr = MultiByteToWideCharInternal(pItemA->pszText);
+	if (!wstr)
+	{
+		return OriginalSendMessageA_Global(Window, Message, wParam, lParam);
+	}
 
+	TCITEMW_COMPAT itemW;
+	memcpy(&itemW, pItemA, sizeof(TCITEMW_COMPAT));
+	itemW.pszText = wstr;
+
+	UINT msgW = (Message == TCM_INSERTITEMA) ? TCM_INSERTITEMW : TCM_SETITEMW;
+	LRESULT Result = SendMessageW(Window, msgW, wParam, (LPARAM)&itemW);
+
+	FreeStringInternal(wstr);
+	return Result;
+}

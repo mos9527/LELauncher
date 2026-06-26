@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LELauncher", "LELauncher\LE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRInjector", "LRInjector\LRInjector.vcxproj", "{3C43BDB5-3E71-46EA-B2E8-E9462D6EFE55}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRHook", "Locale_Remulator\LRHook\LRHook.vcxproj", "{f6ce975d-8c1c-4239-8938-f3aaea6c5ace}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRHook", "LRHook\LRHook.vcxproj", "{f6ce975d-8c1c-4239-8938-f3aaea6c5ace}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRCommonLibrary", "Locale_Remulator\LRCommonLibrary\LRCommonLibrary.vcxproj", "{a20cb1c6-9374-45a4-bce4-aa2d16274906}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LRCommonLibrary", "LRCommonLibrary\LRCommonLibrary.vcxproj", "{a20cb1c6-9374-45a4-bce4-aa2d16274906}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

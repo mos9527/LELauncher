@@ -7,7 +7,7 @@ Emulator by: https://github.com/xupefei/Locale-Emulator
 
 [Re]mulator by: https://github.com/InWILL/Locale_Remulator
 
-TL;DR - same Launcher, using [Re]mulator instead of Emulator, with extended hooks.
+TL;DR - same Launcher, using [Re]mulator instead of Emulator, with userspace hooks instead of NT calls implemented w/ Detours.
 
 Now you can run x64 apps *as well* as x86 apps with it :D
 

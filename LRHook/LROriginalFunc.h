@@ -206,6 +206,25 @@ static int(WINAPI* OriginalDrawTextExA)(
 	_In_opt_ LPDRAWTEXTPARAMS lpdtp
 	) = DrawTextExA;
 
+static BOOL(WINAPI* OriginalExtTextOutA)(
+	_In_ HDC hdc,
+	_In_ int x,
+	_In_ int y,
+	_In_ UINT options,
+	_In_opt_ CONST RECT* lprect,
+	_In_reads_opt_(c) LPCSTR lpString,
+	_In_ UINT c,
+	_In_reads_opt_(c) CONST INT* lpDx
+	) = ExtTextOutA;
+
+static int(WINAPI* OriginalDrawTextA)(
+	_In_ HDC hdc,
+	_Inout_updates_(cchText) LPCSTR lpchText,
+	_In_ int cchText,
+	_Inout_ LPRECT lprc,
+	_In_ UINT format
+	) = DrawTextA;
+
 static HANDLE(WINAPI* OriginalGetClipboardData)(
 	_In_ UINT uFormat
 	) = GetClipboardData;
@@ -254,6 +273,36 @@ static HWND(WINAPI* OriginalCreateDialogIndirectParamA)(
 	_In_ LPARAM dwInitParam
 	) = CreateDialogIndirectParamA;
 
+static HWND(WINAPI* OriginalCreateDialogParamA)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCSTR lpTemplateName,
+	_In_opt_ HWND hWndParent,
+	_In_opt_ DLGPROC lpDialogFunc,
+	_In_ LPARAM dwInitParam
+	) = CreateDialogParamA;
+
+static INT_PTR(WINAPI* OriginalDialogBoxIndirectParamA)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCDLGTEMPLATEA hDialogTemplate,
+	_In_opt_ HWND hWndParent,
+	_In_opt_ DLGPROC lpDialogFunc,
+	_In_ LPARAM dwInitParam
+	) = DialogBoxIndirectParamA;
+
+static int(WINAPI* OriginalLoadStringA)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ UINT uID,
+	_Out_writes_to_(cchBufferMax, return + 1) LPSTR lpBuffer,
+	_In_ int cchBufferMax
+	) = LoadStringA;
+
+static int(WINAPI* OriginalLoadStringW)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ UINT uID,
+	_Out_writes_to_(cchBufferMax, return + 1) LPWSTR lpBuffer,
+	_In_ int cchBufferMax
+	) = LoadStringW;
+
 static ATOM(WINAPI* OriginalRegisterClassA)(
 	_In_ CONST WNDCLASSA* lpWndClass
 	) = RegisterClassA;
@@ -296,12 +345,83 @@ static int(WINAPI* OriginalEnumFontFamiliesExW)(
 	_In_ DWORD dwFlags
 	) = EnumFontFamiliesExW;
 
+typedef LRESULT(WINAPI* SendMessageAFn)(HWND, UINT, WPARAM, LPARAM);
+extern SendMessageAFn OriginalSendMessageA;
+
 static LRESULT(WINAPI* OriginalDefWindowProcA)(
 	_In_ HWND hWnd,
 	_In_ UINT Msg,
 	_In_ WPARAM wParam,
 	_In_ LPARAM lParam
 	) = DefWindowProcA;
+
+static LRESULT(WINAPI* OriginalSendDlgItemMessageA)(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_In_ UINT Msg,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+	) = SendDlgItemMessageA;
+
+static BOOL(WINAPI* OriginalSetDlgItemTextA)(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_In_ LPCSTR lpString
+	) = SetDlgItemTextA;
+
+static UINT(WINAPI* OriginalGetDlgItemTextA)(
+	_In_ HWND hDlg,
+	_In_ int nIDDlgItem,
+	_Out_writes_(cchMax) LPSTR lpString,
+	_In_ int cchMax
+	) = GetDlgItemTextA;
+
+static HMENU(WINAPI* OriginalLoadMenuA)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCSTR lpMenuName
+	) = LoadMenuA;
+
+static HMENU(WINAPI* OriginalLoadMenuW)(
+	_In_opt_ HINSTANCE hInstance,
+	_In_ LPCWSTR lpMenuName
+	) = LoadMenuW;
+
+static BOOL(WINAPI* OriginalInsertMenuA)(
+	_In_ HMENU hMenu,
+	_In_ UINT uPosition,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+	) = InsertMenuA;
+
+static BOOL(WINAPI* OriginalAppendMenuA)(
+	_In_ HMENU hMenu,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+	) = AppendMenuA;
+
+static BOOL(WINAPI* OriginalModifyMenuA)(
+	_In_ HMENU hMnu,
+	_In_ UINT uPosition,
+	_In_ UINT uFlags,
+	_In_ UINT_PTR uIDNewItem,
+	_In_opt_ LPCSTR lpNewItem
+	) = ModifyMenuA;
+
+static BOOL(WINAPI* OriginalInsertMenuItemA)(
+	_In_ HMENU hmenu,
+	_In_ UINT item,
+	_In_ BOOL fByPosition,
+	_In_ LPCMENUITEMINFOA lpmi
+	) = InsertMenuItemA;
+
+static BOOL(WINAPI* OriginalSetMenuItemInfoA)(
+	_In_ HMENU hmenu,
+	_In_ UINT item,
+	_In_ BOOL fByPosition,
+	_In_ LPCMENUITEMINFOA lpmi
+	) = SetMenuItemInfoA;
 
 static LONG(WINAPI* OriginalSetWindowLongA)(
 	_In_ HWND hWnd,
