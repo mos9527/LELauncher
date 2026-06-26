@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -19,6 +19,8 @@ namespace LELauncher
         [STAThread]
         private static void Main(string[] args)
         {
+            Args = args;
+
             SystemHelper.DisableDPIScale();
 
             if (!GlobalHelper.CheckCoreDLLs())
@@ -130,6 +132,11 @@ namespace LELauncher
                         ? $"{jb[0]} "
                         : $"\"{jb[0]}\" ";
                     commandLine += jb[1].Replace("%1", absPath).Replace("%L", absPath).Replace("%*", "");
+                }
+
+                if (Args != null && Args.Length > 0)
+                {
+                    commandLine += string.Join(" ", Args.Select(arg => arg.Contains(" ") ? $"\"{arg}\"" : arg));
                 }
 
                 var currentDirectory = Path.GetDirectoryName(absPath);
