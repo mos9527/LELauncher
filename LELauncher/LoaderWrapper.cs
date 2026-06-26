@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -293,8 +293,8 @@ namespace LELauncher
             public IntPtr hStdError;
         }
 
-        [DllImport("LoaderDll.dll", CharSet = CharSet.Unicode)]
-        public static extern uint LeCreateProcess(IntPtr leb,
+        [DllImport("LRInjector32.dll", EntryPoint = "LeCreateProcess", CharSet = CharSet.Unicode)]
+        private static extern uint LeCreateProcess32(IntPtr leb,
                                                   [MarshalAs(UnmanagedType.LPWStr), In] string applicationName,
                                                   [MarshalAs(UnmanagedType.LPWStr), In] string commandLine,
                                                   [MarshalAs(UnmanagedType.LPWStr), In] string currentDirectory,
@@ -305,6 +305,41 @@ namespace LELauncher
                                                   IntPtr threadAttributes,
                                                   IntPtr environment,
                                                   IntPtr token);
+
+        [DllImport("LRInjector64.dll", EntryPoint = "LeCreateProcess", CharSet = CharSet.Unicode)]
+        private static extern uint LeCreateProcess64(IntPtr leb,
+                                                  [MarshalAs(UnmanagedType.LPWStr), In] string applicationName,
+                                                  [MarshalAs(UnmanagedType.LPWStr), In] string commandLine,
+                                                  [MarshalAs(UnmanagedType.LPWStr), In] string currentDirectory,
+                                                  uint creationFlags,
+                                                  ref STARTUPINFO startupInfo,
+                                                  out PROCESS_INFORMATION processInformation,
+                                                  IntPtr processAttributes,
+                                                  IntPtr threadAttributes,
+                                                  IntPtr environment,
+                                                  IntPtr token);
+
+        public static uint LeCreateProcess(IntPtr leb,
+                                                  string applicationName,
+                                                  string commandLine,
+                                                  string currentDirectory,
+                                                  uint creationFlags,
+                                                  ref STARTUPINFO startupInfo,
+                                                  out PROCESS_INFORMATION processInformation,
+                                                  IntPtr processAttributes,
+                                                  IntPtr threadAttributes,
+                                                  IntPtr environment,
+                                                  IntPtr token)
+        {
+            if (Environment.Is64BitProcess)
+            {
+                return LeCreateProcess64(leb, applicationName, commandLine, currentDirectory, creationFlags, ref startupInfo, out processInformation, processAttributes, threadAttributes, environment, token);
+            }
+            else
+            {
+                return LeCreateProcess32(leb, applicationName, commandLine, currentDirectory, creationFlags, ref startupInfo, out processInformation, processAttributes, threadAttributes, environment, token);
+            }
+        }
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern UInt32 WaitForSingleObject(IntPtr hHandle, UInt32 dwMilliseconds);

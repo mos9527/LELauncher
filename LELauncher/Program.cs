@@ -31,8 +31,10 @@ namespace LELauncher
                     +
                     "\r\n" +
                     "These Dlls are:\r\n" +
-                    "LoaderDll.dll\r\n" +
-                    "LocaleEmulator.dll",
+                    "LRInjector32.dll\r\n" +
+                    "LRInjector64.dll\r\n" +
+                    "LRHookx32.dll\r\n" +
+                    "LRHookx64.dll",
                     "Locale Emulator DLL Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

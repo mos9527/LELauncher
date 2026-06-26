@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace LELauncher
 
         public static bool CheckCoreDLLs()
         {
-            string[] dlls = {"LoaderDll.dll", "LocaleEmulator.dll"};
+            string[] dlls = {"LRInjector32.dll", "LRInjector64.dll", "LRHookx32.dll", "LRHookx64.dll"};
 
             return
                 dlls.Select(dll => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), dll))
